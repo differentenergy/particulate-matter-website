@@ -1,0 +1,866 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>The Invisible Threat | 看不见的威胁</title>
+    <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@300;400;600;700&family=IBM+Plex+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        :root {
+            --bg-primary: #0a0a0a;
+            --bg-secondary: #1a1a1a;
+            --text-primary: #ffffff;
+            --text-secondary: #a0a0a0;
+            --accent: #ff3b3b;
+            --accent-soft: rgba(255, 59, 59, 0.1);
+            --blue: #0066ff;
+            --yellow: #ffd700;
+            --spacing: 20px;
+        }
+
+        body {
+            font-family: 'IBM Plex Sans', sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+
+        /* Typography */
+        h1, h2, h3 {
+            font-family: 'Archivo', sans-serif;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+        }
+
+        /* Header */
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 1000;
+            background: rgba(10, 10, 10, 0.8);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .logo {
+            font-size: 18px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+
+        .lang-toggle {
+            background: none;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: var(--text-primary);
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-family: 'IBM Plex Sans', sans-serif;
+        }
+
+        .lang-toggle:hover {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: rgba(255, 255, 255, 0.3);
+        }
+
+        /* Sections */
+        section {
+            min-height: 100vh;
+            padding: 100px 20px 60px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            position: relative;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        /* Hero Section */
+        #hero {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .particle-canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 10;
+            text-align: center;
+        }
+
+        .hero-headline {
+            font-size: clamp(32px, 8vw, 72px);
+            line-height: 1.1;
+            margin-bottom: 30px;
+            animation: fadeInUp 1s ease-out;
+        }
+
+        .hero-subline {
+            font-size: clamp(16px, 3vw, 24px);
+            color: var(--text-secondary);
+            max-width: 700px;
+            margin: 0 auto 40px;
+            animation: fadeInUp 1s ease-out 0.2s both;
+        }
+
+        .hero-highlight {
+            color: var(--accent);
+            font-weight: 600;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Interactive Slider Section */
+        #slider-section {
+            background: var(--bg-secondary);
+        }
+
+        .section-title {
+            font-size: clamp(28px, 6vw, 48px);
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .section-subtitle {
+            font-size: clamp(14px, 2.5vw, 18px);
+            color: var(--text-secondary);
+            text-align: center;
+            margin-bottom: 60px;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .slider-container {
+            position: relative;
+            padding: 40px 20px;
+        }
+
+        /* Lung Visualization */
+        .lung-diagram {
+            width: 100%;
+            max-width: 400px;
+            height: 400px;
+            margin: 0 auto 40px;
+            position: relative;
+            background: radial-gradient(circle at center, rgba(255, 59, 59, 0.05), transparent);
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .lung-svg {
+            width: 80%;
+            height: 80%;
+            opacity: 0.3;
+            filter: drop-shadow(0 0 20px rgba(255, 59, 59, 0.2));
+        }
+
+        .penetration-indicator {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background: var(--accent);
+            border-radius: 50%;
+            box-shadow: 0 0 20px var(--accent);
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 0.8; }
+            50% { transform: scale(1.2); opacity: 1; }
+        }
+
+        /* Slider Control */
+        .slider-control {
+            margin: 40px 0;
+        }
+
+        .slider-track {
+            position: relative;
+            height: 60px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 30px;
+            margin-bottom: 30px;
+            overflow: visible;
+        }
+
+        .slider-fill {
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            background: linear-gradient(90deg, var(--blue), var(--accent));
+            border-radius: 30px;
+            transition: width 0.3s ease;
+        }
+
+        .slider-input {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            cursor: pointer;
+            z-index: 10;
+        }
+
+        .slider-thumb {
+            position: absolute;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            width: 80px;
+            height: 80px;
+            background: var(--accent);
+            border: 4px solid var(--bg-primary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 14px;
+            box-shadow: 0 4px 20px rgba(255, 59, 59, 0.4);
+            transition: left 0.3s ease;
+            pointer-events: none;
+        }
+
+        .slider-labels {
+            display: flex;
+            justify-content: space-between;
+            font-size: 11px;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-top: 10px;
+        }
+
+        /* Info Cards */
+        .particle-info {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 16px;
+            padding: 30px;
+            margin-top: 40px;
+        }
+
+        .info-row {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        @media (min-width: 768px) {
+            .info-row {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        .info-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+        }
+
+        .info-icon {
+            font-size: 24px;
+            flex-shrink: 0;
+        }
+
+        .info-label {
+            font-size: 12px;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 5px;
+        }
+
+        .info-value {
+            font-size: 16px;
+            font-weight: 500;
+        }
+
+        .key-message {
+            background: var(--accent-soft);
+            border-left: 3px solid var(--accent);
+            padding: 20px;
+            margin-top: 30px;
+            border-radius: 0 8px 8px 0;
+            font-size: clamp(14px, 2.5vw, 18px);
+            font-style: italic;
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        /* Science Section */
+        #science {
+            background: var(--bg-primary);
+        }
+
+        .science-intro {
+            text-align: center;
+            margin-bottom: 60px;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .validation-statement {
+            font-size: clamp(16px, 3vw, 20px);
+            color: var(--text-secondary);
+            margin: 20px 0;
+            line-height: 1.8;
+        }
+
+        .evidence-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 20px;
+            margin-top: 40px;
+        }
+
+        @media (min-width: 768px) {
+            .evidence-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        .evidence-card {
+            background: var(--bg-secondary);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 12px;
+            padding: 24px;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        .evidence-card:hover {
+            border-color: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+        }
+
+        .evidence-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .evidence-icon {
+            font-size: 24px;
+        }
+
+        .evidence-description {
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+
+        .particle-range {
+            display: inline-block;
+            background: rgba(255, 59, 59, 0.1);
+            color: var(--accent);
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        /* CTA Section */
+        #cta {
+            background: var(--bg-secondary);
+            text-align: center;
+        }
+
+        .cta-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            max-width: 400px;
+            margin: 40px auto 0;
+        }
+
+        @media (min-width: 768px) {
+            .cta-buttons {
+                flex-direction: row;
+                justify-content: center;
+                max-width: none;
+            }
+        }
+
+        .btn {
+            padding: 16px 32px;
+            border-radius: 30px;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: inline-block;
+            font-family: 'IBM Plex Sans', sans-serif;
+        }
+
+        .btn-primary {
+            background: var(--accent);
+            color: white;
+            border: none;
+        }
+
+        .btn-primary:hover {
+            background: #ff5252;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(255, 59, 59, 0.3);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: var(--text-primary);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: rgba(255, 255, 255, 0.3);
+        }
+
+        /* Footer */
+        footer {
+            padding: 40px 20px;
+            text-align: center;
+            color: var(--text-secondary);
+            font-size: 13px;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        /* Mobile Optimizations */
+        @media (max-width: 767px) {
+            section {
+                padding: 80px 15px 40px;
+            }
+
+            .lung-diagram {
+                height: 300px;
+            }
+
+            .particle-info {
+                padding: 20px;
+            }
+        }
+
+        /* Touch-friendly interactions */
+        @media (hover: none) and (pointer: coarse) {
+            .evidence-card:active {
+                transform: scale(0.98);
+            }
+
+            .btn:active {
+                transform: scale(0.97);
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo">BROAD</div>
+        <button class="lang-toggle" onclick="toggleLanguage()">中文</button>
+    </header>
+
+    <!-- Hero Section -->
+    <section id="hero">
+        <canvas class="particle-canvas" id="heroCanvas"></canvas>
+        <div class="hero-content">
+            <h1 class="hero-headline">
+                <span data-en="You can see PM2.5." data-zh="你能看见PM2.5。">You can see PM2.5.</span><br>
+                <span class="hero-highlight" data-en="Your body can't stop what's smaller." data-zh="但你的身体无法阻挡更小的颗粒。">Your body can't stop what's smaller.</span>
+            </h1>
+            <p class="hero-subline" data-en="Broad designs air purification for the particles that pass through defenses — not just the ones regulations measure." data-zh="Broad为那些能穿透防御的颗粒设计空气净化系统——而不仅仅是法规测量的那些。">
+                Broad designs air purification for the particles that pass through defenses — not just the ones regulations measure.
+            </p>
+        </div>
+    </section>
+
+    <!-- Interactive Slider Section -->
+    <section id="slider-section">
+        <div class="container">
+            <h2 class="section-title" data-en="Size vs Harm" data-zh="尺寸与危害">Size vs Harm</h2>
+            <p class="section-subtitle" data-en="As particle size decreases, biological impact increases." data-zh="随着颗粒尺寸减小，生物影响增加。">
+                As particle size decreases, biological impact increases.
+            </p>
+
+            <div class="slider-container">
+                <!-- Lung Visualization -->
+                <div class="lung-diagram">
+                    <svg class="lung-svg" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M100 40 C90 40 85 45 85 55 L85 80 C85 90 80 95 70 95 L60 95 C50 95 45 100 45 110 L45 150 C45 160 50 165 60 165 L70 165 C80 165 85 170 85 180 L85 190" stroke="white" stroke-width="2"/>
+                        <path d="M100 40 C110 40 115 45 115 55 L115 80 C115 90 120 95 130 95 L140 95 C150 95 155 100 155 110 L155 150 C155 160 150 165 140 165 L130 165 C120 165 115 170 115 180 L115 190" stroke="white" stroke-width="2"/>
+                        <circle cx="100" cy="35" r="8" fill="white"/>
+                    </svg>
+                    <div class="penetration-indicator" id="penetrationDot"></div>
+                </div>
+
+                <!-- Slider Control -->
+                <div class="slider-control">
+                    <div class="slider-track">
+                        <div class="slider-fill" id="sliderFill"></div>
+                        <input type="range" class="slider-input" id="particleSlider" min="0" max="4" step="1" value="2">
+                        <div class="slider-thumb" id="sliderThumb">
+                            <span id="thumbLabel">PM1</span>
+                        </div>
+                    </div>
+                    <div class="slider-labels">
+                        <span>PM10</span>
+                        <span>ULTRAFINE</span>
+                    </div>
+                </div>
+
+                <!-- Particle Info -->
+                <div class="particle-info">
+                    <div class="info-row">
+                        <div class="info-item">
+                            <span class="info-icon">📏</span>
+                            <div>
+                                <div class="info-label" data-en="SIZE" data-zh="尺寸">SIZE</div>
+                                <div class="info-value" id="sizeValue">1 μm</div>
+                            </div>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-icon">🫁</span>
+                            <div>
+                                <div class="info-label" data-en="PENETRATION" data-zh="穿透深度">PENETRATION</div>
+                                <div class="info-value" id="penetrationValue">Bronchi</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="info-row">
+                        <div class="info-item">
+                            <span class="info-icon">⚠️</span>
+                            <div>
+                                <div class="info-label" data-en="HEALTH RISK" data-zh="健康风险">HEALTH RISK</div>
+                                <div class="info-value" id="riskValue">Moderate</div>
+                            </div>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-icon">🔬</span>
+                            <div>
+                                <div class="info-label" data-en="EXAMPLES" data-zh="示例">EXAMPLES</div>
+                                <div class="info-value" id="examplesValue">Dust, pollen</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="key-message" id="keyMessage">
+                        Particles at this size can penetrate deep into the respiratory system.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Science Section -->
+    <section id="science">
+        <div class="container">
+            <div class="science-intro">
+                <h2 class="section-title" data-en="Why PM2.5 Became the Headline" data-zh="为什么PM2.5成为头条">Why PM2.5 Became the Headline</h2>
+                <p class="validation-statement" data-en="PM2.5 is widely discussed because it is measurable, visible, and regulated. But science does not stop at policy thresholds." data-zh="PM2.5被广泛讨论是因为它可测量、可见且受到监管。但科学并不止步于政策阈值。">
+                    PM2.5 is widely discussed because it is measurable, visible, and regulated. But science does not stop at policy thresholds.
+                </p>
+                <p class="validation-statement" data-en="Health effects do not stop at PM2.5 — exposure continues well below it." data-zh="健康影响不止于PM2.5——暴露持续延伸至更小的颗粒。">
+                    Health effects do not stop at PM2.5 — exposure continues well below it.
+                </p>
+            </div>
+
+            <h3 class="section-title" style="font-size: clamp(24px, 5vw, 36px); margin-bottom: 40px;" data-en="What Science Says" data-zh="科学怎么说">What Science Says</h3>
+
+            <div class="evidence-grid">
+                <div class="evidence-card">
+                    <div class="evidence-title">
+                        <span class="evidence-icon">🫁</span>
+                        <span data-en="Respiratory Penetration" data-zh="呼吸道穿透">Respiratory Penetration</span>
+                    </div>
+                    <p class="evidence-description" data-en="Particles below 1 μm bypass upper respiratory defenses and deposit directly in the alveoli." data-zh="小于1微米的颗粒绕过上呼吸道防御，直接沉积在肺泡中。">
+                        Particles below 1 μm bypass upper respiratory defenses and deposit directly in the alveoli.
+                    </p>
+                    <span class="particle-range">PM0.3–1</span>
+                </div>
+
+                <div class="evidence-card">
+                    <div class="evidence-title">
+                        <span class="evidence-icon">❤️</span>
+                        <span data-en="Cardiovascular Effects" data-zh="心血管影响">Cardiovascular Effects</span>
+                    </div>
+                    <p class="evidence-description" data-en="Ultrafine particles can enter the bloodstream, triggering systemic inflammation and increasing cardiovascular risk." data-zh="超细颗粒可以进入血液，引发系统性炎症并增加心血管风险。">
+                        Ultrafine particles can enter the bloodstream, triggering systemic inflammation and increasing cardiovascular risk.
+                    </p>
+                    <span class="particle-range">&lt;0.1 μm</span>
+                </div>
+
+                <div class="evidence-card">
+                    <div class="evidence-title">
+                        <span class="evidence-icon">🔥</span>
+                        <span data-en="Oxidative Stress" data-zh="氧化应激">Oxidative Stress</span>
+                    </div>
+                    <p class="evidence-description" data-en="Smaller particles have higher surface area-to-mass ratios, generating more reactive oxygen species in lung tissue." data-zh="更小的颗粒具有更高的表面积质量比，在肺组织中产生更多活性氧。">
+                        Smaller particles have higher surface area-to-mass ratios, generating more reactive oxygen species in lung tissue.
+                    </p>
+                    <span class="particle-range">PM0.1–2.5</span>
+                </div>
+
+                <div class="evidence-card">
+                    <div class="evidence-title">
+                        <span class="evidence-icon">🦠</span>
+                        <span data-en="Viral Transport" data-zh="病毒传播">Viral Transport</span>
+                    </div>
+                    <p class="evidence-description" data-en="Submicron aerosols can carry pathogens deeper into the lungs, increasing infection risk." data-zh="亚微米气溶胶可以将病原体带入肺部更深处，增加感染风险。">
+                        Submicron aerosols can carry pathogens deeper into the lungs, increasing infection risk.
+                    </p>
+                    <span class="particle-range">PM0.3–5</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section id="cta">
+        <div class="container">
+            <h2 class="section-title" data-en="See What's in Your Air" data-zh="看看你的空气中有什么">See What's in Your Air</h2>
+            <p class="section-subtitle" data-en="Beyond PM2.5" data-zh="超越PM2.5">Beyond PM2.5</p>
+            
+            <div class="cta-buttons">
+                <a href="#science" class="btn btn-primary" data-en="Explore the Science" data-zh="探索科学">Explore the Science</a>
+                <a href="#contact" class="btn btn-secondary" data-en="Talk to an Engineer" data-zh="联系工程师">Talk to an Engineer</a>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <p data-en="Broad Air Purification Systems | Designed for the particles that matter most" data-zh="Broad空气净化系统 | 为最重要的颗粒而设计">
+            Broad Air Purification Systems | Designed for the particles that matter most
+        </p>
+    </footer>
+
+    <script>
+        let currentLang = 'en';
+
+        // Particle size data
+        const particleData = [
+            {
+                name: { en: 'PM10', zh: 'PM10' },
+                size: '10 μm',
+                penetration: { en: 'Nose & throat', zh: '鼻腔和咽喉' },
+                risk: { en: 'Low', zh: '低' },
+                examples: { en: 'Pollen, mold spores', zh: '花粉、霉菌孢子' },
+                message: { 
+                    en: 'Large particles are filtered by nose and throat. Minimal deep penetration.',
+                    zh: '大颗粒被鼻腔和咽喉过滤。深层渗透最小。'
+                },
+                dotPosition: { x: '50%', y: '20%' }
+            },
+            {
+                name: { en: 'PM2.5', zh: 'PM2.5' },
+                size: '2.5 μm',
+                penetration: { en: 'Upper airways', zh: '上呼吸道' },
+                risk: { en: 'Moderate', zh: '中等' },
+                examples: { en: 'Combustion particles', zh: '燃烧颗粒' },
+                message: { 
+                    en: 'Regulated particles that reach upper airways. This is where most monitoring stops.',
+                    zh: '受监管的颗粒到达上呼吸道。这是大多数监测停止的地方。'
+                },
+                dotPosition: { x: '50%', y: '35%' }
+            },
+            {
+                name: { en: 'PM1', zh: 'PM1' },
+                size: '1 μm',
+                penetration: { en: 'Bronchi', zh: '支气管' },
+                risk: { en: 'Elevated', zh: '升高' },
+                examples: { en: 'Traffic exhaust, industrial emissions', zh: '交通尾气、工业排放' },
+                message: { 
+                    en: 'Particles at this size bypass upper defenses and reach deep lung structures.',
+                    zh: '这种尺寸的颗粒绕过上层防御，到达深层肺部结构。'
+                },
+                dotPosition: { x: '50%', y: '55%' }
+            },
+            {
+                name: { en: 'PM0.3', zh: 'PM0.3' },
+                size: '0.3 μm',
+                penetration: { en: 'Alveoli', zh: '肺泡' },
+                risk: { en: 'High', zh: '高' },
+                examples: { en: 'Bacteria, fine dust', zh: '细菌、细尘' },
+                message: { 
+                    en: 'Submicron particles deposit directly in alveoli where gas exchange occurs.',
+                    zh: '亚微米颗粒直接沉积在进行气体交换的肺泡中。'
+                },
+                dotPosition: { x: '50%', y: '75%' }
+            },
+            {
+                name: { en: 'Ultrafine', zh: '超细' },
+                size: '<0.1 μm',
+                penetration: { en: 'Bloodstream', zh: '血液' },
+                risk: { en: 'Severe', zh: '严重' },
+                examples: { en: 'Viruses, nanoparticles', zh: '病毒、纳米颗粒' },
+                message: { 
+                    en: 'Ultrafine particles cross into blood, causing systemic inflammation and organ damage.',
+                    zh: '超细颗粒进入血液，引起全身炎症和器官损伤。'
+                },
+                dotPosition: { x: '50%', y: '90%' }
+            }
+        ];
+
+        // Slider interaction
+        const slider = document.getElementById('particleSlider');
+        const sliderFill = document.getElementById('sliderFill');
+        const sliderThumb = document.getElementById('sliderThumb');
+        const thumbLabel = document.getElementById('thumbLabel');
+        const penetrationDot = document.getElementById('penetrationDot');
+
+        slider.addEventListener('input', updateSlider);
+
+        function updateSlider() {
+            const value = parseInt(slider.value);
+            const percent = (value / 4) * 100;
+            
+            sliderFill.style.width = percent + '%';
+            sliderThumb.style.left = percent + '%';
+            
+            const data = particleData[value];
+            thumbLabel.textContent = data.name[currentLang];
+            
+            document.getElementById('sizeValue').textContent = data.size;
+            document.getElementById('penetrationValue').textContent = data.penetration[currentLang];
+            document.getElementById('riskValue').textContent = data.risk[currentLang];
+            document.getElementById('examplesValue').textContent = data.examples[currentLang];
+            document.getElementById('keyMessage').textContent = data.message[currentLang];
+            
+            penetrationDot.style.left = data.dotPosition.x;
+            penetrationDot.style.top = data.dotPosition.y;
+        }
+
+        // Initialize
+        updateSlider();
+
+        // Hero particles animation
+        const canvas = document.getElementById('heroCanvas');
+        const ctx = canvas.getContext('2d');
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+
+        resizeCanvas();
+        window.addEventListener('resize', resizeCanvas);
+
+        class Particle {
+            constructor() {
+                this.reset();
+            }
+
+            reset() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.size = Math.random() * 3 + 1;
+                this.speedY = Math.random() * 1 + 0.5;
+                this.speedX = (Math.random() - 0.5) * 0.5;
+                this.opacity = Math.random() * 0.5 + 0.2;
+            }
+
+            update() {
+                this.y += this.speedY;
+                this.x += this.speedX;
+
+                if (this.y > canvas.height) {
+                    this.y = 0;
+                    this.x = Math.random() * canvas.width;
+                }
+            }
+
+            draw() {
+                ctx.fillStyle = `rgba(255, 59, 59, ${this.opacity})`;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
+
+        const particles = [];
+        for (let i = 0; i < 50; i++) {
+            particles.push(new Particle());
+        }
+
+        function animate() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            particles.forEach(particle => {
+                particle.update();
+                particle.draw();
+            });
+            requestAnimationFrame(animate);
+        }
+
+        animate();
+
+        // Language toggle
+        function toggleLanguage() {
+            currentLang = currentLang === 'en' ? 'zh' : 'en';
+            document.querySelector('.lang-toggle').textContent = currentLang === 'en' ? '中文' : 'English';
+            
+            // Update all translatable elements
+            document.querySelectorAll('[data-en]').forEach(el => {
+                el.textContent = el.getAttribute(`data-${currentLang}`);
+            });
+
+            // Update slider values
+            updateSlider();
+        }
+
+        // Smooth scroll for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth' });
+                }
+            });
+        });
+    </script>
+</body>
+</html>
